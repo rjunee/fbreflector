@@ -69,14 +69,49 @@ function buildItem(item) {
     return "";
   }
   
+  console.log(item);
+  
   var service = item.attribution ? item.attribution : 'Facebook';
 
-  html = $("<div class='feed-item'></div>");
-  html.append("<div class='message'>" + item.message + "</div>");
-  html.append("<div class='metadata'></div>")
-    .append(convertDateTimeString(item.created_time) + " via " + service + " - <a href='#'>Commment</a> - <a href='#'>Like</a>");
+  // Message and metadata
+  var html = $("<div class='feed-item'></div>");
+  html.append("<div class='message'>" + item.message.replace(/\n/g, '<br />') + "</div>");
+  var metadata = $("<div class='metadata'></div>");
+  metadata.append(convertDateTimeString(item.created_time) + " via " + service + " - <a href='#'>Commment</a> - <a href='#'>Like</a>");
   
+  // Comments
+  if (item.comments) {
+      var comments_div = $("<div class='comments'></div>");
+      html.append(comments_div);
+      for (var i = 0, l = item.comments.data.length; i < l; i++) {
+          $(buildComment(item.comments.data[i])).hide().appendTo(comments_div).fadeIn();
+      }
+    }
+    
 
+  return html; 
+}
+
+
+// Build HTML for a comment represented in JSON
+function buildComment(comment) {
+  if (!comment.message) {
+    return "";
+  }
+  
+  var html = $("<div class='comment'></div>");
+  
+  html.append("<div class='comment-photo'><img src='http://graph.facebook.com/" + comment.from.id + "/picture?type=square' alt='" + comment.from.name + "' width='50' height='50' /></div>");
+  
+  var details = $("<div class='comment-details'></div");
+  html.append(details);
+  details.append("<div class='commenter'>" + comment.from.name + "</div>");
+  details.append("<div class='comment-text'>" + comment.message.replace(/\n/g, '<br />') + "</div>");
+  var metadata = $("<div class='metadata'></div>");
+  details.append(metadata);
+  metadata.append(convertDateTimeString(comment.created_time) + " via Facebook");
+
+  
   return html; 
 }
 
