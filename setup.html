@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <style type="text/css">
+      pre {
+        background-color: #CCC;
+        width: 850px;
+        padding: 10px;
+      }
+    </style>
+    <title>Facebook Reflector - Setup</title>
+  </head>
+  <body>
+    <h1>Facebook Reflector</h1>
+    <p>Follow these steps to add your Facebook profile feed to your website or blog.</p>
+    <h2>Step 1 - Register your website</h2>
+    <p>Visit <a href="http://developers.facebook.com/setup/" target="_blank">this site</a> and register your website with Facebook.</p>
+    <p>The 'Site URL' must match the location where you plan to install your feed (which should also be the domain this setup page is running from).</p>
+    <h2>Step 2 - Facebook Authorization</h2>
+    <p>Enter the Application ID you were assigned (from the previous step), and connect your site with Facebook</p>
+    <div>
+      <input type="text" id="app-id">
+      <button id="connect">Connect</button>
+      <button id="disconnect">Disconnect</button>
+    </div>
+ 
+
+    <div id="step3" style="display: none;">
+      <h2>Step 3 - Paste this code into your website</h2>
+      <p>Copy and paste the following code into your website, immediately below the &lt;body&gt; tag:</p>
+      <pre><code id="header-code"></code></pre>
+      <p>Then paste the following code at the point in your webpage where you want to display your facebook feed:</p>
+      <pre><code id="insert-code"></code></pre>
+      
+      <h2>Step 4 - Delete this file (optional)</h2>
+      <p>Once you have everything working you can delete this setup.html file</p>
+      
+      <div id="user-info"></div>
+    </div>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+    <div id="fb-root"></div>
+    <script src="http://connect.facebook.net/en_US/all.js"></script>
+    <script>
+      // Check if we are connected on load
+      if ($('#app-id').val()) {
+        // 141393229228589
+        FB.init({ appId: $('#app-id').val() });
+        FB.getLoginStatus(handleSessionResponse);
+      }
+
+      // Hide step 3
+      function clearDisplay() {
+        $('#step3').hide('fast');
+      }
+
+      $('#connect').bind('click', function() {
+        if ($('#app-id').val()) {
+          FB.init({ appId: $('#app-id').val() });
+          FB.login(handleSessionResponse, { perms: 'read_stream, user_photo_video_tags, user_photos, offline_access' });
+        }
+      });
+
+      $('#disconnect').bind('click', function() {
+        FB.api({ method: 'Auth.revokeAuthorization' }, function(response) {
+          clearDisplay();
+        });
+       });
+
+      // handle a session response from any of the auth related calls
+      function handleSessionResponse(response) {
+        // if we dont have a session, hide the code
+        if (!response.session) {
+          clearDisplay();
+          return;
+        }
+        
+        var header_code = "&#10;&lt;script type=&quot;text/javascript&quot; src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js&quot;&gt;&lt;/script&gt;&#10;&lt;div id=&quot;fb-root&quot;&gt;&lt;/div&gt;&#10;&lt;script&gt;&#10;  var fbr_access_token;&#10;  var fbr_user_id; &#10;  window.fbAsyncInit = function() {&#10;    FB.init({appId: '" + $('#app-id').val() + "', status: true, cookie: true,&#10;             xfbml: true});&#10;    fbr_access_token = '" + response.session.access_token + "'&#10;    fbr_user_id = '" + response.session.uid + "';&#10;  };&#10;  (function() {&#10;    var e = document.createElement('script'); e.async = true;&#10;    e.src = document.location.protocol +&#10;      '//connect.facebook.net/en_US/all.js';&#10;    document.getElementById('fb-root').appendChild(e);&#10;    e = document.createElement('script'); e.async = true;&#10;    e.src = 'fbreflector.js';&#10;    document.getElementById('fb-root').appendChild(e);&#10;  }());&#10;&lt;/script&gt;";    
+        var insert_code = "&lt;div id=&quot;fb-reflector&quot;&gt;&lt;/div&gt;";
+        
+        // If we have a session, display step 3
+        $('#header-code').html(header_code);
+        $('#insert-code').html(insert_code);
+        $('#step3').show('fast');        
+      }
+    </script>
+  </body>
+</html>
