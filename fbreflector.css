@@ -31,15 +31,25 @@
   float:left;
   margin:3px 0 0 10px;
 }
+#fb-reflector div.comment div.comment-photo img {
+  border: 0;
+}
 #fb-reflector div.comment div.comment-details {
   margin-left: 70px;
 }
 #fb-reflector div.comment div.commenter {
   font-size:12px;
-  color:#666;
-  font-weight:normal;
+  font-weight: normal;
   line-height:17px;
 }
+#fb-reflector div.comment div.commenter a {
+  color:#666;
+  text-decoration: none;
+}
+#fb-reflector div.comment div.commenter a:hover {
+  text-decoration: underline;
+}
+
 #fb-reflector div.image{
   margin:10px 0 0;
   padding-bottom:2px;

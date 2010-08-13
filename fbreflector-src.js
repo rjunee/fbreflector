@@ -106,11 +106,11 @@ function buildComment(comment) {
   
   var html = $("<div class='comment'></div>");
   
-  html.append("<div class='comment-photo'><img src='http://graph.facebook.com/" + comment.from.id + "/picture?type=square' alt='" + comment.from.name + "' width='50' height='50' /></div>");
+  html.append("<div class='comment-photo'><a href='http://www.facebook.com/profile.php?id=" + comment.from.id + "' target='_blank'><img src='http://graph.facebook.com/" + comment.from.id + "/picture?type=square' alt='" + comment.from.name + "' width='50' height='50' /></a></div>");
   
   var details = $("<div class='comment-details'></div");
   html.append(details);
-  details.append("<div class='commenter'>" + comment.from.name + "</div>");
+  details.append("<div class='commenter'><a href='http://www.facebook.com/profile.php?id=" + comment.from.id + "' target='_blank'>" + comment.from.name + "</a></div>");
   details.append("<div class='comment-text'>" + comment.message.replace(/\n/g, '<br />') + "</div>");
   var metadata = $("<div class='metadata'></div>");
   details.append(metadata);
