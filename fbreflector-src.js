@@ -16,7 +16,7 @@
  *
  */
  
-$(document).ready(function(){
+function fbr_init() {
   // Dummy console if no firebug
   if(typeof console === "undefined") {
     console = { log: function() { } };
@@ -25,8 +25,7 @@ $(document).ready(function(){
   // Load feed
   FB.api('/' + fbr_user_id + '/posts', 'get', { access_token: fbr_access_token }, parseAndDisplayFeed);
   // Request /feed instead of /posts if you want to include wall posts from others
-});
-
+}
 
 
 // Parse and display feed returned from Facebook API call
