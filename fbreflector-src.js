@@ -77,17 +77,17 @@ function buildItem(item) {
   var html = $("<div class='feed-item'></div>");
   html.append("<div class='message'>" + item.message.replace(/\n/g, '<br />') + "</div>");
   var metadata = $("<div class='metadata'></div>");
-  metadata.append(convertDateTimeString(item.created_time) + " via " + service + " - <a href='#'>Commment</a> - <a href='#'>Like</a>");
+  html.append(metadata)
+  metadata.append(convertDateTimeString(item.created_time) + " via " + service + " - <a href='#'>Comment</a> - <a href='#'>Like</a>");
   
   // Comments
   if (item.comments) {
-      var comments_div = $("<div class='comments'></div>");
-      html.append(comments_div);
-      for (var i = 0, l = item.comments.data.length; i < l; i++) {
-          $(buildComment(item.comments.data[i])).hide().appendTo(comments_div).fadeIn();
-      }
+    var comments_div = $("<div class='comments'></div>");
+    html.append(comments_div);
+    for (var i = 0, l = item.comments.data.length; i < l; i++) {
+        $(buildComment(item.comments.data[i])).hide().appendTo(comments_div).fadeIn();
     }
-    
+  }   
 
   return html; 
 }
@@ -110,7 +110,6 @@ function buildComment(comment) {
   var metadata = $("<div class='metadata'></div>");
   details.append(metadata);
   metadata.append(convertDateTimeString(comment.created_time) + " via Facebook");
-
   
   return html; 
 }
