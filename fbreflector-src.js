@@ -64,23 +64,44 @@ function parseAndDisplayFeed(response) {
 
 // Build HTML for a feed item represented in JSON
 // TODO: Is this susceptible to script injection? Or does facebook sanitize their data?
-function buildItem(item) {
-  if (!item.message) {
-    return "";
-  }
-   
+function buildItem(item) {  
   var service = item.attribution ? item.attribution : 'Facebook';
 
-  // Message
   var html = $("<div class='feed-item'></div>");
-  html.append("<div class='message'>" + formatMessage(item.message) + "</div>");
+
+  // Message
+  var message = ""
+  switch(item['type']) {
+  case 'link':
+  case 'status':
+    message = formatMessage(item.message);
+    break;
+  case 'photo':
+    message = buildPhotoMessage(item);
+    break;
+  default:
+    if (item.message) {
+      message = formatMessage(item.message);
+    } 
+  }
+  html.append("<div class='message'>" + message + "</div>");
   
   // Image
-  image = parseTwitpic(item.message);
-  if (image) {
-    html.append("<div class='image'><a href='" + image.url + "' target='_blank'><img src='" + image.thumb + "' alt='twitpic' width='150' height='150' /></a></div>");
+  switch(item['type']) {
+  case 'link':
+    image = parseTwitpic(item.message);
+    if (image) {
+      html.append("<div class='image'><a href='" + image.url + "' target='_blank'><img src='" + image.thumb + "' alt='twitpic' width='150' height='150' /></a></div>");
+      service = "TwitPic";
+    }
+    break;
+  case 'photo':
+    if (item.picture) {
+      html.append("<div class='image'><a href='" + item.link + "' target='_blank'><img src='" + item.picture + "' alt='" + item.name + "' /></a></div>");
+    }
+    break;
   }
-  
+    
   // Metadata
   var metadata = $("<div class='metadata'></div>");
   html.append(metadata)
@@ -124,6 +145,40 @@ function buildComment(comment) {
   
   return html; 
 }
+
+
+// Constructs message HTML for a photo item
+function buildPhotoMessage(item) {
+  var description;
+  var album;
+  
+  // First line
+  if (item.message) {
+    description = item.message;
+  } else if (item.description) {
+    description = item.description;
+  }
+  
+  // Second line
+  if (item.name) {
+    album = item.name;
+    if (item.caption) {
+      album += " (" + item.caption + ")";
+    }
+  } else if (item.caption) {
+    album = item.caption;
+  }
+  if (item.link) {
+    album = "<a href='" + item.link + "' target='_blank'>" + album + "</a>";
+  }
+  
+  if (description) {
+    return description + "<br />" + album;
+  } else {
+    return album;
+  }
+}
+
 
 
 // Takes a message string, automatically links and URLs, and replaces linebreaks with <br />
