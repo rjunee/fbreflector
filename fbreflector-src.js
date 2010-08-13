@@ -63,7 +63,7 @@ function parseAndDisplayFeed(response) {
 
 
 // Build HTML for a feed item represented in JSON
-// TODO: Is this susceptible to script injection? Or does facebook sanitize data returned?
+// TODO: Is this susceptible to script injection? Or does facebook sanitize their data?
 function buildItem(item) {
   if (!item.message) {
     return "";
@@ -71,13 +71,21 @@ function buildItem(item) {
    
   var service = item.attribution ? item.attribution : 'Facebook';
 
-  // Message and metadata
+  // Message
   var html = $("<div class='feed-item'></div>");
   html.append("<div class='message'>" + formatMessage(item.message) + "</div>");
+  
+  // Image
+  image = parseTwitpic(item.message);
+  if (image) {
+    html.append("<div class='image'><a href='" + image.url + "' target='_blank'><img src='" + image.thumb + "' alt='twitpic' width='150' height='150' /></a></div>");
+  }
+  
+  // Metadata
   var metadata = $("<div class='metadata'></div>");
   html.append(metadata)
-  metadata.append(convertDateTimeString(item.created_time) + " via " + service + " - <a href='#'>Comment</a> - <a href='#'>Like</a>");
-  
+  metadata.append(convertDateTimeString(item.created_time) + " via " + service + " - <a href='#'>Comment</a> - <a href='#'>Like</a>");  
+ 
   // Likes
   if (item.likes) {
     html.append("<div class='likes'>" + item.likes + (item.likes == 1 ? " person likes " : " people like ") + "this</div>");
@@ -123,6 +131,21 @@ function formatMessage(message) {
   return linkify(message, {callback: linkifyNewWindow}).replace(/\n/g, '<br />');
 }
 
+
+// Look for twitpic links, and if found, return an object:
+// {url: <link to twitpic page>, thumb: <url of image thumbnail>}
+// Otherwise return false
+function parseTwitpic(message) {
+  parts = /http:\/\/twitpic.com\/([a-z0-9]+)/(message);
+  if (parts) {
+    var image = {};
+    image.url = parts[0];
+    image.thumb = "http://twitpic.com/show/thumb/" + parts[1];
+    return image;
+  } else {
+    return false;
+  }
+}
 
 // Converts the datetime string supplied by facebook into something more readable, and in local time
 // Input: 2010-08-03T05:57:39+0000
