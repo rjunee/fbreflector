@@ -80,6 +80,11 @@ function buildItem(item) {
   html.append(metadata)
   metadata.append(convertDateTimeString(item.created_time) + " via " + service + " - <a href='#'>Comment</a> - <a href='#'>Like</a>");
   
+  // Likes
+  if (item.likes) {
+    html.append("<div class='likes'>" + item.likes + (item.likes == 1 ? " person likes " : " people like ") + "this</div>");
+  }
+  
   // Comments
   if (item.comments) {
     var comments_div = $("<div class='comments'></div>");

@@ -17,6 +17,11 @@
   color:#666;
   font-size: 12px;
 }
+#fb-reflector div.likes {
+  margin: 5px 0 0 0;
+  color:#666;
+  font-size: 12px;
+}
 #fb-reflector div.comment {
   margin: 15px 0 0 0;
   font-size:12px;
