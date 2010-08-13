@@ -21,6 +21,11 @@
   color:#666;
   font-size: 12px;
 }
+#fb-reflector a.more-comments {
+  margin: 15px 0 0 0;
+  font-size:12px;
+  color: #666;  
+}
 #fb-reflector div.comment {
   margin: 15px 0 0 0;
   font-size:12px;

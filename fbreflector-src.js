@@ -61,6 +61,24 @@ function parseAndDisplayFeed(response) {
 }
 
 
+// Parse and display comments returned from Facebook API call (when requesting additional comments)
+function parseMoreComments(response, comments_div) {
+  // Make sure we got something back
+  if (!response || !response.data) {
+    console.log("Error loading more comments");
+    console.log(response);
+    return;
+  }
+  
+ comments_div.slideUp(200, function() {
+    comments_div.empty();
+    for (var i = 0, l = response.data.length; i < l; i++) {
+      comments_div.append(buildComment(response.data[i]));
+    }
+    comments_div.slideDown();
+  });
+}
+
 
 // Build HTML for a feed item represented in JSON
 // TODO: Is this susceptible to script injection? Or does facebook sanitize their data?
@@ -116,8 +134,21 @@ function buildItem(item) {
   if (item.comments) {
     var comments_div = $("<div class='comments'></div>");
     html.append(comments_div);
+    
+    // Handle more comments link if necessary
+    if (item.comments.count > item.comments.data.length) {
+      var more_link = $("<a class='more-comments' href='javascript:void(0);'>View all " + item.comments.count + " comments</a>");
+      more_link.click(function() {
+        FB.api("/" + item.id + "/comments", 'get', { access_token: fbr_access_token }, function(response) {
+          parseMoreComments(response, more_link.parent('div.comments'));
+        });
+      });
+      comments_div.append(more_link);
+    }
+    
+    // Add included comments
     for (var i = 0, l = item.comments.data.length; i < l; i++) {
-        $(buildComment(item.comments.data[i])).hide().appendTo(comments_div).fadeIn();
+      $(buildComment(item.comments.data[i])).hide().appendTo(comments_div).fadeIn();
     }
   }   
 
