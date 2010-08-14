@@ -23,8 +23,14 @@ function fbr_init() {
   }
   
   // Load feed
-  FB.api('/' + fbr_user_id + '/posts', 'get', { access_token: fbr_access_token }, parseAndDisplayFeed);
-  // Request /feed instead of /posts if you want to include wall posts from others
+  if ($('div#fb-reflector').length > 0) {
+    FB.api('/' + fbr_user_id + '/posts', 'get', { access_token: fbr_access_token }, parseAndDisplayFeed);
+    // Request /feed instead of /posts if you want to include wall posts from others
+  }
+  
+  // Load photos
+  // TODO
+
 }
 
 
@@ -219,7 +225,10 @@ function formatMessage(message) {
 // {url: <link to twitpic page>, thumb: <url of image thumbnail>}
 // Otherwise return false
 function parseTwitpic(message) {
-  parts = /http:\/\/twitpic.com\/([a-z0-9]+)/(message);
+  //var parts = /http:\/\/twitpic.com\/([a-z0-9]+)/(message);
+  var re = /http:\/\/twitpic.com\/([a-z0-9]+)/;
+  var parts = re.exec(message);
+  
   if (parts) {
     var image = {};
     image.url = parts[0];
@@ -234,7 +243,10 @@ function parseTwitpic(message) {
 // Input: 2010-08-03T05:57:39+0000
 // Output: August 2 at 10:57pm
 function convertDateTimeString(input) { 
-  parts = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})([+-]\d{4})/(input);
+  //var parts = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})([+-]\d{4})/(input);
+  var re = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})([+-]\d{4})/;
+  var parts = re.exec(input);
+  
   utc_time = Date.UTC(parts[1], parseInt(parts[2],10)-1, parts[3], parts[4], parts[5], parts[6]); 
   date = new Date(utc_time);
   

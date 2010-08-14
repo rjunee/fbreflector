@@ -67,6 +67,6 @@
   margin:20px 5px 0 0;
   padding-right:22px;
 }
-#fb-reflector a.more:hover {
+#fb-reflector div#paging-link a:hover {
   text-decoration:none;
 }
