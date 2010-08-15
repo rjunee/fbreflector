@@ -29,7 +29,10 @@ function fbr_init() {
   }
   
   // Load photos
-  // TODO
+  if ($('div#fb-photos').length > 0) {
+    $('div#fb-photos').empty();
+    FB.api('/' + fbr_user_id + '/photos', 'get', { access_token: fbr_access_token }, parseAndDisplayPhotos);
+  }
 
 }
 
@@ -213,6 +216,41 @@ function buildPhotoMessage(item) {
   }
 }
 
+
+
+// Parse and display feed returned from Facebook API call
+function parseAndDisplayPhotos(response) {
+  // Make sure we got something back
+  if (!response || !response.data) {
+    console.log("Error loading photos");
+    console.log(response);
+    return;
+  }
+  
+  // Remove existing paging link (if it exists)
+  if ($('div#fb-photos div#paging-link').length > 0) {
+    $('div#fb-photos div#paging-link').remove();
+  }
+  
+  // Build each photo
+  for (var i = 0, l = response.data.length; i < l; i++) {
+    $(buildPhoto(response.data[i])).hide().appendTo('div#fb-photos').fadeIn();
+  }
+  
+  // Add paging link if necessary
+  if (response.paging && response.paging.next) {
+    $("<div id='paging-link'><a href='javascript:void(0);'>More</a></div>").hide().appendTo('div#fb-photos').fadeIn();
+    var next_path = response.paging.next.replace(/https:\/\/graph.facebook.com/i, '');
+    $('div#fb-photos div#paging-link a').click(function() {
+      FB.api(next_path, 'get', { access_token: fbr_access_token }, parseAndDisplayPhotos);
+    });
+  }
+}
+
+// Build HTML for a photo item represented in JSON
+function buildPhoto(item) {
+  return "<div class='thumbnail'><img src='" + item.picture + "' alt='' /></div>";
+}
 
 
 // Takes a message string, automatically links and URLs, and replaces linebreaks with <br />

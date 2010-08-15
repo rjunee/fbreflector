@@ -70,3 +70,18 @@
 #fb-reflector div#paging-link a:hover {
   text-decoration:none;
 }
+
+#fb-photos {
+  width: 500px;
+  overflow:hidden; 
+}
+#fb-photos div.thumbnail {
+  display: inline;
+  width: 130px;
+  height: 130px;
+  border: 1px solid #666;
+}
+#fb-photos div.thumbnail img {
+  margin: auto;
+  display: block;
+}
