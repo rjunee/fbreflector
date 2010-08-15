@@ -76,12 +76,18 @@
   overflow:hidden; 
 }
 #fb-photos div.thumbnail {
-  display: inline;
-  width: 130px;
-  height: 130px;
-  border: 1px solid #666;
+  float: left;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  margin: 1px;
 }
 #fb-photos div.thumbnail img {
-  margin: auto;
-  display: block;
+  border: 0;
+}
+#fb-photos div.paging-link {
+  display:inline-block;
+  clear: both;
+  margin:20px 5px 0 0;
+  padding-right:22px;
 }

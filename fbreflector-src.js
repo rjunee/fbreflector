@@ -24,6 +24,7 @@ function fbr_init() {
   
   // Load feed
   if ($('div#fb-reflector').length > 0) {
+    $('div#fb-reflector').empty();
     FB.api('/' + fbr_user_id + '/posts', 'get', { access_token: fbr_access_token }, parseAndDisplayFeed);
     // Request /feed instead of /posts if you want to include wall posts from others
   }
@@ -47,8 +48,8 @@ function parseAndDisplayFeed(response) {
   }
   
   // Remove existing paging link (if it exists)
-  if ($('div#fb-reflector div#paging-link').length > 0) {
-    $('div#fb-reflector div#paging-link').remove();
+  if ($('div#fb-reflector div.paging-link').length > 0) {
+    $('div#fb-reflector div.paging-link').remove();
   }
   
   // Build each item
@@ -58,9 +59,9 @@ function parseAndDisplayFeed(response) {
   
   // Add paging link if necessary
   if (response.paging && response.paging.next) {
-    $("<div id='paging-link'><a href='javascript:void(0);'>Older Posts</a></div>").hide().appendTo('div#fb-reflector').fadeIn();
+    $("<div class='paging-link'><a href='javascript:void(0);'>Older Posts</a></div>").hide().appendTo('div#fb-reflector').fadeIn();
     var next_path = response.paging.next.replace(/https:\/\/graph.facebook.com/i, '');
-    $('div#fb-reflector div#paging-link a').click(function() {
+    $('div.fb-reflector div#paging-link a').click(function() {
       FB.api(next_path, 'get', { access_token: fbr_access_token }, parseAndDisplayFeed);
     });
   }
@@ -228,8 +229,8 @@ function parseAndDisplayPhotos(response) {
   }
   
   // Remove existing paging link (if it exists)
-  if ($('div#fb-photos div#paging-link').length > 0) {
-    $('div#fb-photos div#paging-link').remove();
+  if ($('div#fb-photos div.paging-link').length > 0) {
+    $('div#fb-photos div.paging-link').remove();
   }
   
   // Build each photo
@@ -239,9 +240,9 @@ function parseAndDisplayPhotos(response) {
   
   // Add paging link if necessary
   if (response.paging && response.paging.next) {
-    $("<div id='paging-link'><a href='javascript:void(0);'>More</a></div>").hide().appendTo('div#fb-photos').fadeIn();
+    $("<div class='paging-link'><a href='javascript:void(0);'>More</a></div>").hide().appendTo('div#fb-photos').fadeIn();
     var next_path = response.paging.next.replace(/https:\/\/graph.facebook.com/i, '');
-    $('div#fb-photos div#paging-link a').click(function() {
+    $('div#fb-photos div.paging-link a').click(function() {
       FB.api(next_path, 'get', { access_token: fbr_access_token }, parseAndDisplayPhotos);
     });
   }
@@ -249,7 +250,22 @@ function parseAndDisplayPhotos(response) {
 
 // Build HTML for a photo item represented in JSON
 function buildPhoto(item) {
-  return "<div class='thumbnail'><img src='" + item.picture + "' alt='' /></div>";
+  // Figure out how to scale the thumb to consume 100x100 square
+  var scaleSize = 100;
+  var width = item.width;
+  var height = item.height;
+  var aspect = width/height;
+  if (width > height) {
+    height = scaleSize;
+    width = height * aspect;
+  } else if (height > width) {
+    width = scaleSize;
+    height = width/aspect;
+  } else {
+    width = height = scaleSize;
+  }
+  
+  return "<div class='thumbnail'><img src='" + item.picture + "' alt='' width='" + width +"' height='" + height + "' /></div>";
 }
 
 
