@@ -22,6 +22,16 @@ function fbr_init() {
     console = { log: function() { } };
   }
   
+  // Default config variables
+  console.log(fbr_config);
+  if (typeof fbr_config['show_comments'] == 'undefined') {
+    fbr_config['show_comments'] = true;
+  }
+  if (typeof fbr_config['show_likes'] == 'undefined') {
+    fbr_config['show_likes'] = true;
+  }
+  
+  
   // Load feed
   if ($('div#fb-reflector').length > 0) {
     $('div#fb-reflector').empty();
@@ -133,12 +143,12 @@ function buildItem(item) {
   metadata.append(convertDateTimeString(item.created_time) + " via " + service + " - <a href='#'>Comment</a> - <a href='#'>Like</a>");  
  
   // Likes
-  if (item.likes) {
+  if (item.likes && fbr_config['show_likes']) {
     html.append("<div class='likes'>" + item.likes + (item.likes == 1 ? " person likes " : " people like ") + "this</div>");
   }
   
   // Comments
-  if (item.comments) {
+  if (item.comments && fbr_config['show_comments']) {
     var comments_div = $("<div class='comments'></div>");
     html.append(comments_div);
     
