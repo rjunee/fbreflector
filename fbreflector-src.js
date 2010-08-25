@@ -71,7 +71,7 @@ function parseAndDisplayFeed(response) {
   if (response.paging && response.paging.next) {
     $("<div class='paging-link'><a href='javascript:void(0);'>Older Posts</a></div>").hide().appendTo('div#fb-reflector').fadeIn();
     var next_path = response.paging.next.replace(/https:\/\/graph.facebook.com/i, '');
-    $('div.fb-reflector div#paging-link a').click(function() {
+    $('div#fb-reflector div.paging-link a').click(function() {
       FB.api(next_path, 'get', { access_token: fbr_access_token }, parseAndDisplayFeed);
     });
   }
