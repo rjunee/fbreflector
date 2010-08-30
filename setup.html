@@ -49,7 +49,6 @@
     <script>
       // Check if we are connected on load
       if ($('#app-id').val()) {
-        // 141393229228589
         FB.init({ appId: $('#app-id').val() });
         FB.getLoginStatus(handleSessionResponse);
       }

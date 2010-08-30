@@ -23,12 +23,17 @@ function fbr_init() {
   }
   
   // Default config variables
-  console.log(fbr_config);
   if (typeof fbr_config['show_comments'] == 'undefined') {
     fbr_config['show_comments'] = true;
   }
   if (typeof fbr_config['show_likes'] == 'undefined') {
     fbr_config['show_likes'] = true;
+  }
+  if (typeof fbr_config['enable_like'] == 'undefined') {
+    fbr_config['enable_like'] = true;
+  }
+  if (typeof fbr_config['enable_comment'] == 'undefined') {
+    fbr_config['enable_comment'] = true;
   }
   
   
@@ -140,7 +145,20 @@ function buildItem(item) {
   // Metadata
   var metadata = $("<div class='metadata'></div>");
   html.append(metadata)
-  metadata.append(convertDateTimeString(item.created_time) + " via " + service + " - <a href='#'>Comment</a> - <a href='#'>Like</a>");  
+  metadata.append(convertDateTimeString(item.created_time) + " via " + service);
+  // Comment link
+  if (fbr_config['enable_comment']) {
+    metadata.append(" - <a href='#'>Comment</a>");
+  }
+  // Like link
+  if (fbr_config['enable_like']) {
+    var like_link = $("<a href='javascript:void(0)'>Like</a>");
+    like_link.click(function() {
+      like(item.id);
+    });
+    metadata.append(" - ");
+    metadata.append(like_link);
+  }  
  
   // Likes
   if (item.likes && fbr_config['show_likes']) {
@@ -302,6 +320,42 @@ function parseTwitpic(message) {
     return false;
   }
 }
+
+
+// Like a piece of content
+// This function needs some refactoring...
+function like(content_id) {
+  FB.getLoginStatus(function(response) {
+    if (response.session) {
+      // Like the content
+      FB.api(content_id + '/likes', 'post', function(response) {
+        if (!response || response.error) {
+          console.log('Error liking content ' + content_id);
+        } else {
+          // Increment like count
+          alert('success');
+        }
+      });
+    } else {
+      FB.login(function(response) {
+        if (response.session) {
+          // Like the content
+          FB.api(content_id + '/likes', 'post', function(response) {
+            if (!response || response.error) {
+              console.log('Error liking content ' + content_id);
+            } else {
+              // Increment like count
+              alert('success');
+            }
+          }); 
+        } else {
+          console.log('User cancelled login');
+        }
+      }, { perms: 'publish_stream' });
+    }
+  });   
+}
+
 
 // Converts the datetime string supplied by facebook into something more readable, and in local time
 // Input: 2010-08-03T05:57:39+0000
