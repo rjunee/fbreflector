@@ -15,7 +15,7 @@ Known Issues:
 * I have only tested this on my own profile feed, so there are certainly many types of posts
   that aren't yet handled correctly (feel free to contribute!)
 
-* Ability to Like and Comment on posts is not yet implemented
+* Ability to Comment on posts is not yet implemented
 
 * Posts with more than 25 comments might not be loaded.  Probably need to implement paging.
 
@@ -26,8 +26,10 @@ Future Features:
 Some things I would like to implement (again, feel free to contribute!):
 
 * Config variables that define whether posts from friends onto your wall are
-  included, as well as whether comments/likes should be displayed
+  included
   
 * View list of people who liked a post
 
 * Ability to Like comments
+
+* Ability to unlike items
