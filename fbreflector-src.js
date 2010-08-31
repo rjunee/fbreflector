@@ -152,9 +152,9 @@ function buildItem(item) {
   }
   // Like link
   if (fbr_config['enable_like']) {
-    var like_link = $("<a href='javascript:void(0)'>Like</a>");
+    var like_link = $("<a class='likelink' href='javascript:void(0)'>Like</a>");
     like_link.click(function() {
-      like(item.id);
+      like(item.id, html);
     });
     metadata.append(" - ");
     metadata.append(like_link);
@@ -323,8 +323,9 @@ function parseTwitpic(message) {
 
 
 // Like a piece of content
+// Supply the content ID, and a reference to the jQuery object for this item
 // This function needs some refactoring...
-function like(content_id) {
+function like(content_id, html) {
   FB.getLoginStatus(function(response) {
     if (response.session) {
       // Like the content
@@ -332,8 +333,8 @@ function like(content_id) {
         if (!response || response.error) {
           console.log('Error liking content ' + content_id);
         } else {
-          // Increment like count
-          alert('success');
+          // Update link
+          html.find('a.likelink').replaceWith("Liked");
         }
       });
     } else {
@@ -344,9 +345,8 @@ function like(content_id) {
             if (!response || response.error) {
               console.log('Error liking content ' + content_id);
             } else {
-              // Increment like count
-              alert('success');
-            }
+              // Update link
+              html.find('a.likelink').replaceWith("Liked");            }
           }); 
         } else {
           console.log('User cancelled login');
