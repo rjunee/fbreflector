@@ -113,6 +113,15 @@ function buildItem(item) {
   var message = ""
   switch(item['type']) {
   case 'link':
+    if (item.message) {   // Twitter links have a message
+      message = formatMessage(item.message);
+    } else if (item.link && item.name) {
+      message = '<a href="' + item.link + '" title="' + item.name + '" target="_blank">' + item.name + '</a>';
+      if (item.description) {
+        message += '<br />' + item.description;
+      } 
+    }
+    break;
   case 'status':
     message = formatMessage(item.message);
     break;
@@ -129,10 +138,14 @@ function buildItem(item) {
   // Image
   switch(item['type']) {
   case 'link':
-    image = parseTwitpic(item.message);
-    if (image) {
-      html.append("<div class='image'><a href='" + image.url + "' target='_blank'><img src='" + image.thumb + "' alt='twitpic' width='150' height='150' /></a></div>");
-      service = "TwitPic";
+    if (item.picture) {
+      html.append("<div class='image'><a href='" + item.link + "' target='_blank'><img src='" + item.picture + "' alt='" + item.name + "' /></a></div>");
+    } else {
+      var image = parseTwitpic(item.message);
+      if (image) {
+        html.append("<div class='image'><a href='" + image.url + "' target='_blank'><img src='" + image.thumb + "' alt='twitpic' width='150' height='150' /></a></div>");
+        service = "TwitPic";
+      }
     }
     break;
   case 'photo':
@@ -297,9 +310,9 @@ function buildPhoto(item) {
 }
 
 
-// Takes a message string, automatically links and URLs, and replaces linebreaks with <br />
+// Takes a message string, automatically links any URLs, and replaces linebreaks with <br />
 function formatMessage(message) {
-  return linkify(message, {callback: linkifyNewWindow}).replace(/\n/g, '<br />');
+  return message ? linkify(message, {callback: linkifyNewWindow}).replace(/\n/g, '<br />') : "";
 }
 
 
