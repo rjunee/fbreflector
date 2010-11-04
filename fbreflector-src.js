@@ -206,7 +206,7 @@ function buildItem(item) {
 
 // Build HTML for a comment represented in JSON
 function buildComment(comment) {
-  if (!comment.message) {
+  if (!comment.message || !comment.from) {
     return "";
   }
   
