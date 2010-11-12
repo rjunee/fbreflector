@@ -113,6 +113,7 @@ function buildItem(item) {
   var message = ""
   switch(item['type']) {
   case 'link':
+  case 'video':
     if (item.message) {   // Twitter links have a message
       message = formatMessage(item.message);
     } else if (item.link && item.name) {
@@ -127,7 +128,7 @@ function buildItem(item) {
     break;
   case 'photo':
     message = buildPhotoMessage(item);
-    break;
+    break;  
   default:
     if (item.message) {
       message = formatMessage(item.message);
