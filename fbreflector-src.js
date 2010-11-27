@@ -139,6 +139,7 @@ function buildItem(item) {
   // Image
   switch(item['type']) {
   case 'link':
+  case 'status':
     if (item.picture) {
       html.append("<div class='image'><a href='" + item.link + "' target='_blank'><img src='" + item.picture + "' alt='" + item.name + "' /></a></div>");
     } else {
